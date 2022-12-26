@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.lab9.ui.home.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        android:name="com.example.lab9.ui.shoutbox.ShoutBoxFragment"
+        android:label="@string/menu_shoutbox"
+        tools:layout="@layout/fragment_shoutbox" />
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="com.example.lab9.ui.slideshow.SlideshowFragment"
+        android:name="com.example.lab9.ui.settings.SettingsFragment"
         android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_settings" />
 </navigation>
