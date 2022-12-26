@@ -12,7 +12,7 @@ interface JsonPlaceholderAPI {
     fun getMessages(): Call<ArrayList<Message>>
 
     @POST("/shoutbox/message")
-    fun postMessage(login: String,content: String): Call<Message>
+    fun postMessage(@Body body: AddMessage): Call<Message>
 
     @PUT("/shoutbox/message/{id}")
     fun editMessage(login: String,content: String): Call<Void>

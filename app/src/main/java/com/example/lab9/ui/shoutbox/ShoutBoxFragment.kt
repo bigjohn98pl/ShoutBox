@@ -16,11 +16,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.lab9.JsonPlaceholderAPI
-import com.example.lab9.Message
-import com.example.lab9.MessageAdapter
-import com.example.lab9.R
+import com.example.lab9.*
 import com.example.lab9.databinding.FragmentShoutboxBinding
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,7 +32,13 @@ private var _binding: FragmentShoutboxBinding? = null
   // This property is only valid between onCreateView and
   // onDestroyView.
   private val binding get() = _binding!!
+  private var myLogin = "DefaultMan"
   private var list = ArrayList<Message>()
+  private val myAPI = Retrofit.Builder()
+    .baseUrl(JsonPlaceholderAPI.BASE_URL)
+    .addConverterFactory(GsonConverterFactory.create())
+    .build()
+    .create(JsonPlaceholderAPI::class.java)
   @SuppressLint("ResourceType")
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -46,20 +50,13 @@ private var _binding: FragmentShoutboxBinding? = null
 
     _binding = FragmentShoutboxBinding.inflate(inflater, container, false)
     val root: View = binding.root
-      val item = Message("Lolo","Janek","33:55:22","fwfsdfsdfs")
-      val item2 = Message("Lolo","Janek","33:55:22","fwfsdfsdfs")
-      //list.add(item)
-      //list.add(item2)
-    //val textView: TextView = binding.textHome
+    myLogin = loadData("KEY_LOGIN","DefaultMan")
+    val sendButt = binding.button2
+      .setOnClickListener{
+        addMessage()
+      }
   if(isOnline(this.requireContext(),true)){
-    val recyclerView: RecyclerView = binding.recyclerViewMessages
     getMessages()
-    //Log.e("onResponse", favData)
-    Log.e("onResponse mess global3", list.toString())
-    recyclerView.adapter = MessageAdapter(list)
-    recyclerView.layoutManager = LinearLayoutManager(this.context)
-    recyclerView.setHasFixedSize(true)
-
   }
 
 //    shoutBoxViewModel.text.observe(viewLifecycleOwner) {
@@ -88,7 +85,6 @@ private var _binding: FragmentShoutboxBinding? = null
             recyclerView.adapter = MessageAdapter(list)
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.setHasFixedSize(true)
-            Log.e("onResponse mess global2", list.toString())
           }
         }
         override fun onFailure(call: Call<ArrayList<Message>>, t: Throwable) {
@@ -98,6 +94,36 @@ private var _binding: FragmentShoutboxBinding? = null
 
       })
   }
+
+  private fun addMessage() {
+
+    myAPI.postMessage(AddMessage( myLogin,getMessageContent())).enqueue(object : Callback<Message> {
+      override fun onFailure(call: Call<Message>, t: Throwable) {
+        Log.e("ShoutBox", "ERROR: $t")
+        Snackbar.make(
+          binding.root,
+          "Something goes wrong :(",
+          Snackbar.LENGTH_SHORT
+        ).show()
+      }
+
+      override fun onResponse(call: Call<Message>, response: Response<Message>) {
+        if (response.isSuccessful) {
+          Snackbar.make(
+            binding.root,
+            "Message sent ".plus(myLogin).plus("!"),
+            Snackbar.LENGTH_SHORT
+          ).show()
+        }
+
+        val recycler_view = binding.recyclerViewMessages
+        if(recycler_view != null) {
+          recycler_view.scrollToPosition(list.size - 1)
+        }
+      }
+    })
+  }
+
   private fun isOnline(context: Context, toast: Boolean): Boolean {
     val connectivityManager =
       context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -128,6 +154,13 @@ private var _binding: FragmentShoutboxBinding? = null
       Toast.makeText(this.context,"There is no connection!",Toast.LENGTH_SHORT).show()
     }
     return false
+  }
+  private fun loadData(KEY: String, default: String): String {
+    val pref = this.activity?.getSharedPreferences("shared preferences", Context.MODE_PRIVATE)
+    return pref?.getString(KEY, default)!!
+  }
+  private fun getMessageContent(): String{
+    return binding.messageToSend.editableText.toString()
   }
 override fun onDestroyView() {
         super.onDestroyView()
