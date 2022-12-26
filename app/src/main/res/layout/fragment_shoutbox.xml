@@ -10,10 +10,11 @@
         android:id="@+id/recycler_view_messages"
         android:layout_width="383dp"
         android:layout_height="629dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_message"/>
+        tools:listitem="@layout/item_message" />
 
     <TextView
         android:id="@+id/text_home"

@@ -1,26 +1,23 @@
 package com.example.lab9
 
 import retrofit2.Call
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.PUT
+import retrofit2.http.*
 
 interface JsonPlaceholderAPI {
     companion object {
-        const val BASE_URL = "http://tgryl.pl/shoutbox/"
+        const val BASE_URL = "https://tgryl.pl"
     }
 
-    @GET("messages")
-    fun getMessages(): Call<List<Message>>
+    @GET("/shoutbox/messages")
+    fun getMessages(): Call<ArrayList<Message>>
 
-    @POST("message")
-    fun postMessage(login: String,content: String)
+    @POST("/shoutbox/message")
+    fun postMessage(login: String,content: String): Call<Message>
 
-    @PUT("message/{id}")
-    fun editMessage(login: String,content: String)
+    @PUT("/shoutbox/message/{id}")
+    fun editMessage(login: String,content: String): Call<Void>
 
-    @DELETE("message/{id}")
-    fun deleteMessage(id: String)
+    @DELETE("/shoutbox/message/{id}")
+    fun deleteMessage(@Path("id") id:String): Call<Void>
 
 }
