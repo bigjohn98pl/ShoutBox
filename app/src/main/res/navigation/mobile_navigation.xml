@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_settings">
 
     <fragment
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_shoutbox"
         android:name="com.example.lab9.ui.shoutbox.ShoutBoxFragment"
         android:label="@string/menu_shoutbox"
         tools:layout="@layout/fragment_shoutbox" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
+        android:id="@+id/nav_settings"
         android:name="com.example.lab9.ui.settings.SettingsFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_settings" />
