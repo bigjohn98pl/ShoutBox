@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.lab9.databinding.FragmentSettingsBinding
+import com.google.android.material.snackbar.Snackbar
 
 class SettingsFragment : Fragment() {
 
@@ -42,7 +43,12 @@ private var _binding: FragmentSettingsBinding? = null
       val setButton: Button = binding.button
       setButton.setOnClickListener{
           saveData("KEY_LOGIN",binding.putLogin.editableText.toString())
-          //binding.textView2.text = loadData( "KEY_LOGIN","Maniur")
+          val login = loadData( "KEY_LOGIN","DefaultMan")
+          Snackbar.make(
+              binding.root,
+              "Login set to: ".plus(login),
+              Snackbar.LENGTH_LONG
+          ).show()
       }
     return root
   }

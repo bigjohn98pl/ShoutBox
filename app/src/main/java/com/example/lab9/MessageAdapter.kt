@@ -4,9 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
-class MessageAdapter(private val messageList: List<Message>): RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
+
+class MessageAdapter(private val messageList: List<Message>): RecyclerView.Adapter<MessageAdapter.MessageViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_message,
@@ -26,10 +28,26 @@ class MessageAdapter(private val messageList: List<Message>): RecyclerView.Adapt
 
     override fun getItemCount() = messageList.size
 
-    class MessageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class MessageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView),View.OnLongClickListener {
+        init {
+            itemView.setOnLongClickListener(this)
+        }
+
         val msgID: TextView = itemView.findViewById(R.id.idValue)
         val login: TextView = itemView.findViewById(R.id.loginValue)
         val date: TextView = itemView.findViewById(R.id.dateValue)
         val messText: TextView = itemView.findViewById(R.id.messageValue)
+
+        override fun onLongClick(view: View): Boolean {
+            Toast.makeText(
+                view.context,
+                "long click ".plus(login.text.toString()),
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return true
+        }
     }
+
+
 }

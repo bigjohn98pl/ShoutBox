@@ -1,6 +1,7 @@
 package com.example.lab9.ui.shoutbox
 
 import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -14,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lab9.*
@@ -51,14 +53,33 @@ private var _binding: FragmentShoutboxBinding? = null
     _binding = FragmentShoutboxBinding.inflate(inflater, container, false)
     val root: View = binding.root
     myLogin = loadData("KEY_LOGIN","DefaultMan")
-    val sendButt = binding.button2
+    binding.button2
       .setOnClickListener{
         addMessage()
+        getMessages()
       }
   if(isOnline(this.requireContext(),true)){
     getMessages()
   }
-
+  binding.swipelayout.setOnRefreshListener {
+    if(isOnline(this.requireContext(),true)){
+      getMessages()
+    }
+    binding.swipelayout.isRefreshing = false
+  }
+    val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
+      override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        //if (myLogin == viewHolder.itemView.findViewById<TextView>(R.id.loginValue).text.toString()) {
+          val position = viewHolder.adapterPosition
+          list.removeAt(position)
+          binding.recyclerViewMessages.adapter?.notifyItemRemoved(position)
+          deleteComment(viewHolder.itemView.findViewById<TextView>(R.id.idValue).text.toString())
+        //}
+        getMessages()
+      }
+    }
+    val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+    itemTouchHelper.attachToRecyclerView(binding.recyclerViewMessages)
 //    shoutBoxViewModel.text.observe(viewLifecycleOwner) {
 //      textView.text = it
 //    }
@@ -67,11 +88,7 @@ private var _binding: FragmentShoutboxBinding? = null
   }
   @SuppressLint("SuspiciousIndentation")
   private fun getMessages(){
-    val myAPI = Retrofit.Builder()
-      .baseUrl(JsonPlaceholderAPI.BASE_URL)
-      .addConverterFactory(GsonConverterFactory.create())
-      .build()
-      .create(JsonPlaceholderAPI::class.java)
+    binding.swipelayout.isRefreshing = true
 
       myAPI.getMessages().enqueue(object : Callback<ArrayList<Message>> {
         override fun onResponse(call: Call<ArrayList<Message>>, response: Response<ArrayList<Message>>) {
@@ -85,6 +102,8 @@ private var _binding: FragmentShoutboxBinding? = null
             recyclerView.adapter = MessageAdapter(list)
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.setHasFixedSize(true)
+            recyclerView.scrollToPosition(list.size-1)
+            binding.swipelayout.isRefreshing = false
           }
         }
         override fun onFailure(call: Call<ArrayList<Message>>, t: Throwable) {
@@ -124,6 +143,27 @@ private var _binding: FragmentShoutboxBinding? = null
     })
   }
 
+  private fun deleteComment(id: String) {
+
+    myAPI.deleteMessage(id).enqueue(object : Callback<Void> {
+      override fun onFailure(call: Call<Void>, t: Throwable) {
+        Snackbar.make(
+          binding.root,
+          "Something goes wrong :(",
+          Snackbar.LENGTH_SHORT
+        ).show()
+      }
+
+      override fun onResponse(call: Call<Void>, response: Response<Void>) {
+        Snackbar.make(
+          binding.root,
+          "Message is deleted!",
+          Snackbar.LENGTH_SHORT
+        ).show()
+      }
+    })
+  }
+
   private fun isOnline(context: Context, toast: Boolean): Boolean {
     val connectivityManager =
       context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -131,19 +171,16 @@ private var _binding: FragmentShoutboxBinding? = null
       connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
     if (capabilities != null) {
       if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-        //Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
         if(toast){
           Toast.makeText(this.context,"There is CELLULAR connection!",Toast.LENGTH_SHORT).show()
         }
         return true
       } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-        //Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
         if(toast){
           Toast.makeText(this.context,"There is WIFI connection!",Toast.LENGTH_SHORT).show()
         }
         return true
       } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-        //Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
         if(toast){
           Toast.makeText(this.context,"There is ETHERNET connection!",Toast.LENGTH_SHORT).show()
         }
