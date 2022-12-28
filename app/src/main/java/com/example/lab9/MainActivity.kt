@@ -1,5 +1,5 @@
 package com.example.lab9
-import android.content.Context
+
 import android.os.Bundle
 import android.view.Menu
 import com.google.android.material.snackbar.Snackbar
@@ -11,7 +11,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.example.lab9.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -46,11 +45,6 @@ private lateinit var binding: ActivityMainBinding
         // Inflate the menu; this adds items to the action bar if it is present.
         //menuInflater.inflate(R.menu.main, menu)
         return true
-    }
-
-    fun loadData(KEY: String, default: String): String {
-        val pref = getSharedPreferences("shared preferences", Context.MODE_PRIVATE)
-        return pref?.getString(KEY, default)!!
     }
 
     override fun onSupportNavigateUp(): Boolean {

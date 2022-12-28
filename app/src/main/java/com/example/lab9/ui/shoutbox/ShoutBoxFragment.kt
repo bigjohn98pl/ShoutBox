@@ -164,6 +164,19 @@ private var _binding: FragmentShoutboxBinding? = null
     })
   }
 
+  private fun editComment(id: String, login: String, content: String) {
+
+    myAPI.editMessage(id, login, content).enqueue(object : Callback<Void> {
+      override fun onFailure(call: Call<Void>, t: Throwable) {
+        Log.e("EditPostActivity", "ERROR: $t")
+      }
+
+      override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+      }
+    })
+  }
+
   private fun isOnline(context: Context, toast: Boolean): Boolean {
     val connectivityManager =
       context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

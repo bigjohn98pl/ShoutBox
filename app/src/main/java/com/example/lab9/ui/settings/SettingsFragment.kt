@@ -1,15 +1,11 @@
 package com.example.lab9.ui.settings
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.lab9.databinding.FragmentSettingsBinding
@@ -22,7 +18,6 @@ private var _binding: FragmentSettingsBinding? = null
   // onDestroyView.
   private val binding get() = _binding!!
 
-  @SuppressLint("CommitPrefEdits")
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
@@ -34,8 +29,8 @@ private var _binding: FragmentSettingsBinding? = null
 
     _binding = FragmentSettingsBinding.inflate(inflater, container, false)
     val root: View = binding.root
-    val editView: EditText = binding.putLogin
-      val textView = editView as TextView
+    //val editView: EditText = binding.putLogin
+      //val textView = editView as TextView
     settingsViewModel.text.observe(viewLifecycleOwner) {
         //textView.text = it
     }
@@ -47,7 +42,7 @@ private var _binding: FragmentSettingsBinding? = null
           Snackbar.make(
               binding.root,
               "Login set to: ".plus(login),
-              Snackbar.LENGTH_LONG
+              Snackbar.LENGTH_LONG,
           ).show()
       }
     return root
