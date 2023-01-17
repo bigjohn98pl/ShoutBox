@@ -14,6 +14,7 @@ interface JsonPlaceholderAPI {
     @POST("/shoutbox/message")
     fun postMessage(@Body body: AddMessage): Call<Message>
 
+    @FormUrlEncoded
     @PUT("/shoutbox/message/{id}")
     fun editMessage(@Path("id") id:String, @Field("login") login:String, @Field("content") content:String): Call<Void>
 
